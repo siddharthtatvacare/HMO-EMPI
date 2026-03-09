@@ -135,3 +135,198 @@ export const ADDRESSES = {
     'Visayas Ave., Quezon City', 'Commonwealth Ave., Quezon City', 'Fairview, Quezon City'
   ]
 };
+
+// ============================================================
+// NEW — HMO EMPI Constants
+// ============================================================
+
+// Filipino employers with member size tiers
+// Total members across all employers should sum to ~1000
+export const EMPLOYERS = [
+  // Large (50-80 members each)
+  { name: 'San Miguel Corporation', size: 'large', members: 78 },
+  { name: 'Ayala Corporation', size: 'large', members: 71 },
+  { name: 'PLDT Inc.', size: 'large', members: 65 },
+  { name: 'Globe Telecom', size: 'large', members: 58 },
+  { name: 'BDO Unibank', size: 'large', members: 62 },
+  { name: 'Jollibee Foods Corp', size: 'large', members: 52 },
+  { name: 'SM Investments', size: 'large', members: 55 },
+  // Medium (20-49 members each)
+  { name: 'Meralco', size: 'medium', members: 44 },
+  { name: 'Aboitiz Equity Ventures', size: 'medium', members: 38 },
+  { name: 'Manila Water', size: 'medium', members: 32 },
+  { name: 'Metrobank', size: 'medium', members: 35 },
+  { name: 'Bank of the Philippine Islands', size: 'medium', members: 30 },
+  { name: 'Robinsons Land', size: 'medium', members: 28 },
+  { name: 'Cebu Pacific Air', size: 'medium', members: 25 },
+  { name: 'Philippine Airlines', size: 'medium', members: 22 },
+  { name: 'Universal Robina Corp', size: 'medium', members: 26 },
+  { name: 'Megaworld Corporation', size: 'medium', members: 24 },
+  { name: 'First Gen Corporation', size: 'medium', members: 20 },
+  // Small (5-19 members each)
+  { name: 'Converge ICT', size: 'small', members: 18 },
+  { name: 'DMCI Holdings', size: 'small', members: 16 },
+  { name: 'Filinvest Land', size: 'small', members: 15 },
+  { name: 'Security Bank', size: 'small', members: 14 },
+  { name: 'Emperador Inc.', size: 'small', members: 12 },
+  { name: 'GT Capital Holdings', size: 'small', members: 11 },
+  { name: 'Monde Nissin', size: 'small', members: 10 },
+  { name: 'DoubleDragon Properties', size: 'small', members: 9 },
+  { name: 'Puregold Price Club', size: 'small', members: 12 },
+  { name: 'Vista Land & Lifescapes', size: 'small', members: 10 },
+  { name: 'Wilcon Depot', size: 'small', members: 8 },
+  { name: 'AllDay Marts', size: 'small', members: 7 },
+  { name: 'Century Pacific Food', size: 'small', members: 8 },
+  { name: 'D&L Industries', size: 'small', members: 6 },
+  { name: 'Shakey\'s Pizza', size: 'small', members: 7 },
+  { name: 'Max\'s Group', size: 'small', members: 6 },
+];
+
+// Risk cohort definitions — derived from biomarker profiles off count
+export const RISK_COHORTS = [
+  { id: 'extremely_low', label: 'Extremely Low', profilesOff: 0, color: '#0E6B5E', cssVar: '--risk-ext-low' },
+  { id: 'low', label: 'Low', profilesOff: 1, color: '#00875A', cssVar: '--risk-low' },
+  { id: 'at_risk', label: 'At Risk', profilesOff: 2, color: '#C27D2E', cssVar: '--risk-at' },
+  { id: 'high', label: 'High', profilesOff: 3, color: '#E8590C', cssVar: '--risk-high' },
+  { id: 'extremely_high', label: 'Extremely High', profilesOff: [4, 5], color: '#DE350B', cssVar: '--risk-ext-high' },
+];
+
+// Metabolic score interpretation bands (raw additive, 157-616 range)
+export const METABOLIC_SCORE_BANDS = [
+  { label: 'Excellent', min: 526, color: '#0E6B5E' },
+  { label: 'Good', min: 430, max: 525, color: '#00875A' },
+  { label: 'Moderate', min: 310, max: 429, color: '#C27D2E' },
+  { label: 'Poor', min: 215, max: 309, color: '#E8590C' },
+  { label: 'Critical', max: 214, color: '#DE350B' },
+];
+
+// Biomarker profile definitions with normal ranges
+// Source: goodflip_scoring.md diagnostic section
+export const BIOMARKER_PROFILES = {
+  hba1c: {
+    label: 'HbA1c',
+    unit: '%',
+    normalMax: 5.6,
+    borderlineMax: 6.4,
+    // Single test — off if >= 6.5
+    isOff: (value) => value >= 6.5,
+    isBorderline: (value) => value >= 5.7 && value < 6.5,
+    generate: (riskFactor) => {  // riskFactor 0-1, higher = worse
+      const base = 4.8 + riskFactor * 4.2; // 4.8 to 9.0
+      return parseFloat(base.toFixed(1));
+    }
+  },
+  lipidProfile: {
+    label: 'Lipid Profile',
+    offThreshold: 2,  // off if >= 2 of 8 sub-tests out of range
+    subTests: [
+      { name: 'Total Cholesterol', unit: 'mg/dL', normalMax: 200, generate: (rf) => Math.round(140 + rf * 120) },
+      { name: 'Triglycerides', unit: 'mg/dL', normalMax: 150, generate: (rf) => Math.round(80 + rf * 170) },
+      { name: 'HDL', unit: 'mg/dL', normalMin: 40, generate: (rf) => Math.round(65 - rf * 35) },
+      { name: 'Non-HDL Cholesterol', unit: 'mg/dL', normalMax: 130, generate: (rf) => Math.round(90 + rf * 80) },
+      { name: 'LDL', unit: 'mg/dL', normalMax: 100, generate: (rf) => Math.round(60 + rf * 100) },
+      { name: 'VLDL', unit: 'mg/dL', normalMax: 30, generate: (rf) => Math.round(15 + rf * 30) },
+      { name: 'Chol/HDL Ratio', unit: '', normalMin: 3.5, normalMax: 5.0, generate: (rf) => parseFloat((3.0 + rf * 3.5).toFixed(1)) },
+      { name: 'HDL/LDL Ratio', unit: '', normalMin: 0.5, normalMax: 3.0, generate: (rf) => parseFloat((2.5 - rf * 2.2).toFixed(1)) },
+    ]
+  },
+  bloodGlucose: {
+    label: 'Blood Glucose',
+    unit: 'mg/dL',
+    normalMax: 100,
+    borderlineMax: 125,
+    // Single test — off if >= 126
+    isOff: (value) => value >= 126,
+    isBorderline: (value) => value >= 100 && value < 126,
+    generate: (riskFactor) => {
+      const base = 75 + riskFactor * 100; // 75 to 175
+      return Math.round(base);
+    }
+  },
+  kidneyProfile: {
+    label: 'Kidney Profile',
+    offThreshold: 3,  // off if >= 3 of 9 sub-tests out of range
+    subTests: [
+      { name: 'BUN', unit: 'mg/dL', normalMin: 8.9, normalMax: 20.6, generate: (rf) => parseFloat((8 + rf * 25).toFixed(1)) },
+      { name: 'Creatinine', unit: 'mg/dL', normalMin: 0.72, normalMax: 1.25, generate: (rf) => parseFloat((0.6 + rf * 1.5).toFixed(2)) },
+      { name: 'Uric Acid', unit: 'mg/dL', normalMin: 3.5, normalMax: 7.2, generate: (rf) => parseFloat((3.0 + rf * 6.0).toFixed(1)) },
+      { name: 'Calcium', unit: 'mg/dL', normalMin: 8.4, normalMax: 10.2, generate: (rf) => parseFloat((8.0 + rf * 4.0).toFixed(1)) },
+      { name: 'Phosphorus', unit: 'mg/dL', normalMin: 2.3, normalMax: 4.7, generate: (rf) => parseFloat((2.0 + rf * 4.0).toFixed(1)) },
+      { name: 'Sodium', unit: 'mmol/L', normalMin: 136, normalMax: 145, generate: (rf) => Math.round(134 + rf * 16) },
+      { name: 'Potassium', unit: 'mmol/L', normalMin: 3.5, normalMax: 5.1, generate: (rf) => parseFloat((3.2 + rf * 2.5).toFixed(1)) },
+      { name: 'Chloride', unit: 'mmol/L', normalMin: 98, normalMax: 107, generate: (rf) => Math.round(96 + rf * 16) },
+      { name: 'eGFR', unit: 'mL/min', normalMin: 90, generate: (rf) => Math.round(120 - rf * 80) },
+    ]
+  },
+  liverFunction: {
+    label: 'Liver Function',
+    offThreshold: 3,  // off if >= 3 of 11 sub-tests out of range
+    subTests: [
+      { name: 'Bilirubin Total', unit: 'mg/dL', normalMin: 0.2, normalMax: 1.2, generate: (rf) => parseFloat((0.2 + rf * 2.0).toFixed(1)) },
+      { name: 'Bilirubin Direct', unit: 'mg/dL', normalMax: 0.5, generate: (rf) => parseFloat((0.1 + rf * 0.8).toFixed(1)) },
+      { name: 'Bilirubin Indirect', unit: 'mg/dL', normalMin: 0.1, normalMax: 1.0, generate: (rf) => parseFloat((0.1 + rf * 1.5).toFixed(1)) },
+      { name: 'AST', unit: 'U/L', normalMin: 5, normalMax: 34, generate: (rf) => Math.round(10 + rf * 50) },
+      { name: 'ALT', unit: 'U/L', normalMax: 55, generate: (rf) => Math.round(12 + rf * 70) },
+      { name: 'ALP', unit: 'U/L', normalMin: 40, normalMax: 150, generate: (rf) => Math.round(40 + rf * 160) },
+      { name: 'Total Protein', unit: 'g/dL', normalMin: 6.4, normalMax: 8.3, generate: (rf) => parseFloat((6.0 + rf * 3.5).toFixed(1)) },
+      { name: 'Albumin', unit: 'g/dL', normalMin: 3.8, normalMax: 5.0, generate: (rf) => parseFloat((4.8 - rf * 2.0).toFixed(1)) },
+      { name: 'Globulin', unit: 'g/dL', normalMin: 2.3, normalMax: 3.5, generate: (rf) => parseFloat((2.2 + rf * 2.0).toFixed(1)) },
+      { name: 'A/G Ratio', unit: '', normalMin: 1.0, normalMax: 2.1, generate: (rf) => parseFloat((2.0 - rf * 1.5).toFixed(1)) },
+      { name: 'GGT', unit: 'U/L', normalMin: 12, normalMax: 64, generate: (rf) => Math.round(15 + rf * 80) },
+    ]
+  }
+};
+
+// Competitor molecule mapping: molecule → Unilab brand → competitor brand
+export const COMPETITOR_MOLECULES = [
+  { molecule: 'Metformin 500mg', unilabBrand: 'Glucofast', competitorBrand: 'Glucophage (Merck)', category: 'diabetes' },
+  { molecule: 'Metformin 850mg', unilabBrand: 'Glucofast 850', competitorBrand: 'Glucophage XR (Merck)', category: 'diabetes' },
+  { molecule: 'Losartan 50mg', unilabBrand: 'Lifezar', competitorBrand: 'Cozaar (MSD)', category: 'hypertension' },
+  { molecule: 'Losartan 100mg', unilabBrand: 'Lifezar 100', competitorBrand: 'Cozaar (MSD)', category: 'hypertension' },
+  { molecule: 'Atorvastatin 20mg', unilabBrand: 'Avamax', competitorBrand: 'Lipitor (Pfizer)', category: 'cholesterol' },
+  { molecule: 'Atorvastatin 40mg', unilabBrand: 'Avamax 40', competitorBrand: 'Lipitor (Pfizer)', category: 'cholesterol' },
+  { molecule: 'Amlodipine 5mg', unilabBrand: 'Normetec', competitorBrand: 'Norvasc (Pfizer)', category: 'hypertension' },
+  { molecule: 'Amlodipine 10mg', unilabBrand: 'Normetec 10', competitorBrand: 'Norvasc (Pfizer)', category: 'hypertension' },
+  { molecule: 'Empagliflozin 10mg', unilabBrand: null, competitorBrand: 'Jardiance (Boehringer Ingelheim)', category: 'diabetes' },
+  { molecule: 'Rosuvastatin 20mg', unilabBrand: 'Cresmax', competitorBrand: 'Crestor (AstraZeneca)', category: 'cholesterol' },
+  { molecule: 'Telmisartan 40mg', unilabBrand: 'Pritel', competitorBrand: 'Micardis (Boehringer Ingelheim)', category: 'hypertension' },
+  { molecule: 'Sitagliptin 100mg', unilabBrand: null, competitorBrand: 'Januvia (MSD)', category: 'diabetes' },
+];
+
+// External healthcare providers (where leaked spend goes)
+export const EXTERNAL_PROVIDERS = {
+  hospitals: [
+    'St. Luke\'s Medical Center - QC',
+    'Asian Hospital and Medical Center',
+    'The Medical City',
+    'Makati Medical Center',
+    'Cardinal Santos Medical Center'
+  ],
+  pharmacies: [
+    'Mercury Drug',
+    'Watsons',
+    'Rose Pharmacy',
+    'Generics Pharmacy',
+    'SouthStar Drug'
+  ],
+  diagnosticLabs: [
+    'Hi-Precision Diagnostics',
+    'Health Metrics Inc.',
+    'Healthway QualiMed',
+    'MyHealth Clinic',
+    'Personalab'
+  ]
+};
+
+// Geographic locations for leakage analysis
+export const LOCATIONS = [
+  'Quezon City', 'Makati CBD', 'BGC Taguig', 'Mandaluyong', 'Pasig',
+  'San Juan', 'Pasay', 'Parañaque', 'Las Piñas', 'Muntinlupa'
+];
+
+// Hospitalization reasons (for high-risk patients)
+export const HOSPITALIZATION_REASONS = [
+  'Diabetic ketoacidosis', 'Acute kidney injury', 'Hypertensive crisis',
+  'Liver failure exacerbation', 'Cardiovascular event', 'Pneumonia',
+  'Sepsis', 'Stroke', 'Heart failure decompensation', 'Diabetic foot infection'
+];

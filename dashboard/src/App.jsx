@@ -1,23 +1,23 @@
 import { useState } from 'react';
-import ExecutiveSummary from './pages/ExecutiveSummary';
-import ConsultationsPage from './pages/ConsultationsPage';
-import PharmacyPage from './pages/PharmacyPage';
-import DiagnosticsPage from './pages/DiagnosticsPage';
-import CDMPage from './pages/CDMPage';
+import PopulationRiskPage from './pages/PopulationRiskPage';
+import HealthOutcomesPage from './pages/HealthOutcomesPage';
+import EcosystemRetentionPage from './pages/EcosystemRetentionPage';
+import FinancialIntelligencePage from './pages/FinancialIntelligencePage';
+import OperationsPage from './pages/OperationsPage';
 import PatientRegistry from './pages/PatientRegistry';
 import './App.css';
 
 const TABS = [
-  { id: 'executive', label: 'Executive Summary' },
-  { id: 'consultations', label: 'Consultations' },
-  { id: 'pharmacy', label: 'Pharmacy' },
-  { id: 'diagnostics', label: 'Diagnostics' },
-  { id: 'cdm', label: 'CDM' },
+  { id: 'population-risk', label: 'Population Risk Overview' },
+  { id: 'health-outcomes', label: 'Health Outcomes' },
+  { id: 'ecosystem', label: 'Ecosystem Retention' },
+  { id: 'financial', label: 'Financial Intelligence' },
+  { id: 'operations', label: 'Operations' },
   { id: 'patients', label: 'Patient Registry' },
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('executive');
+  const [activeTab, setActiveTab] = useState('population-risk');
 
   function handleDrillDown(tab) {
     setActiveTab(tab);
@@ -36,8 +36,8 @@ export default function App() {
         <div className="top-header-left">
           <div className="logo">IC</div>
           <div>
-            <div className="brand-title">Intellicare — Platform Analytics Dashboard</div>
-            <div className="brand-sub">Healthcare Analytics &bull; Philippines</div>
+            <div className="brand-title">Intellicare — HMO EMPI Dashboard</div>
+            <div className="brand-sub">Enterprise Master Patient Index &bull; Philippines</div>
           </div>
         </div>
         <div className="top-header-right">
@@ -59,11 +59,11 @@ export default function App() {
       </div>
 
       <div className="tab-content">
-        {activeTab === 'executive' && <ExecutiveSummary onDrillDown={handleDrillDown} />}
-        {activeTab === 'consultations' && <ConsultationsPage onPatientClick={handlePatientClick} />}
-        {activeTab === 'pharmacy' && <PharmacyPage onPatientClick={handlePatientClick} />}
-        {activeTab === 'diagnostics' && <DiagnosticsPage onPatientClick={handlePatientClick} />}
-        {activeTab === 'cdm' && <CDMPage onPatientClick={handlePatientClick} />}
+        {activeTab === 'population-risk' && <PopulationRiskPage onDrillDown={handleDrillDown} onPatientClick={handlePatientClick} />}
+        {activeTab === 'health-outcomes' && <HealthOutcomesPage onPatientClick={handlePatientClick} />}
+        {activeTab === 'ecosystem' && <EcosystemRetentionPage onPatientClick={handlePatientClick} />}
+        {activeTab === 'financial' && <FinancialIntelligencePage onPatientClick={handlePatientClick} />}
+        {activeTab === 'operations' && <OperationsPage onPatientClick={handlePatientClick} />}
         {activeTab === 'patients' && <PatientRegistry />}
       </div>
     </>

@@ -352,6 +352,112 @@
 .progress-bar { height: 6px; background: #E8EAED; border-radius: 3px; overflow: hidden; }
 .progress-fill { height: 100%; border-radius: 3px; }
 
+/* ===== SUB-TAB NAV (Operations) ===== */
+.sub-tab-nav {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+.sub-tab-btn {
+  padding: 8px 18px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.sub-tab-btn:hover { color: var(--text); background: rgba(0,0,0,0.02); }
+.sub-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: rgba(0,0,0,0.02);
+}
+
+/* ===== DRILL-DOWN PANEL ===== */
+.drilldown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.drilldown-panel {
+  background: white;
+  border-radius: 10px 10px 0 0;
+  width: 100%;
+  max-width: 1200px;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+  animation: slideUp 0.2s ease;
+}
+.drilldown-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.drilldown-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+}
+.drilldown-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: #F0F2F5;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.drilldown-close {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+.drilldown-close:hover {
+  background: var(--red-bg);
+  border-color: var(--red);
+  color: var(--red);
+}
+.drilldown-body {
+  padding: 14px 20px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Clickable KPI card visual feedback */
+.kpi-card[style*="cursor: pointer"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
   .kpi-row.five { grid-template-columns: repeat(3, 1fr); }

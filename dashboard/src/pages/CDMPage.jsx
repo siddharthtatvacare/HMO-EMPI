@@ -18,17 +18,23 @@ export default function CDMPage({ onPatientClick }) {
   const columns = [
     { key: 'patientName', label: 'Patient' },
     { key: 'age', label: 'Age' },
-    { key: 'initialScore', label: 'Initial Score' },
-    { key: 'metabolicScore', label: 'Current Score', render: (v) => {
-      const color = v > 70 ? COLORS.green : v > 50 ? COLORS.amber : COLORS.red;
-      return <strong style={{ color }}>{v}</strong>;
+    { key: 'isImprover', label: 'Status', render: (v) => (
+      <strong style={{ color: v ? COLORS.green : COLORS.red }}>{v ? '↑ Improving' : '↓ Declining'}</strong>
+    )},
+    { key: 'metabolicScore', label: 'Met Score', render: (v) => {
+      if (!v) return '—';
+      const color = v.current > 430 ? COLORS.green : v.current > 310 ? COLORS.amber : COLORS.red;
+      return <span>{v.initial} → <strong style={{ color }}>{v.current}</strong></span>;
     }},
-    { key: 'dietPlanAssignedDate', label: 'Diet Plan' },
-    { key: 'physioPlanAssignedDate', label: 'Physio Plan' },
-    { key: 'dietConsultationsBooked', label: 'Diet Consults' },
-    { key: 'physioConsultationsBooked', label: 'Physio Consults' },
-    { key: 'mealLoggingCount', label: 'Meal Logs' },
-    { key: 'exerciseLoggingCount', label: 'Exercise Logs' },
+    { key: 'coachingSessions', label: 'Coaching' },
+    { key: 'dietPlanAdherence', label: 'Diet Adh.', render: (v) => (
+      <span style={{ fontWeight: 600, color: v >= 70 ? COLORS.green : v >= 40 ? COLORS.amber : COLORS.red }}>{v}%</span>
+    )},
+    { key: 'exercisePlanAdherence', label: 'Exercise Adh.', render: (v) => (
+      <span style={{ fontWeight: 600, color: v >= 65 ? COLORS.green : v >= 35 ? COLORS.amber : COLORS.red }}>{v}%</span>
+    )},
+    { key: 'mealLoggingRate', label: 'Meal Log %', render: (v) => `${v}%` },
+    { key: 'exerciseLoggingRate', label: 'Exercise Log %', render: (v) => `${v}%` },
   ];
 
   return (
@@ -47,10 +53,14 @@ export default function CDMPage({ onPatientClick }) {
           sub={`Avg: ${(m.totalPhysioConsults / m.total).toFixed(1)} per patient`} color="purple" />
       </div>
 
-      <div className="section-label">Engagement Metrics</div>
-      <div className="kpi-row four">
-        <KpiCard label="Total Meal Logs" value={m.totalMealLogs.toLocaleString()} sub={`Avg: ${m.avgMealLogs}/patient`} color="green" />
-        <KpiCard label="Total Exercise Logs" value={m.totalExerciseLogs.toLocaleString()} sub={`Avg: ${m.avgExerciseLogs}/patient`} color="blue" />
+      <div className="section-label">Adherence & Engagement</div>
+      <div className="kpi-row five">
+        <KpiCard label="Avg Diet Adherence" value={`${m.avgDietAdherence}%`}
+          sub="To caloric plan" color={m.avgDietAdherence >= 60 ? 'green' : 'amber'} />
+        <KpiCard label="Avg Exercise Adherence" value={`${m.avgExerciseAdherence}%`}
+          sub="To workout plan" color={m.avgExerciseAdherence >= 55 ? 'green' : 'amber'} />
+        <KpiCard label="Avg Daily Steps" value={m.avgDailySteps?.toLocaleString() || '—'}
+          sub="NEAT indicator" color="accent" />
         <KpiCard label="Not Enrolled" value={(patients.length - m.total).toLocaleString()}
           sub="Opportunity for outreach" color="amber" />
         <KpiCard label="Score Declined" value={(m.total - m.improved).toLocaleString()}
@@ -103,13 +113,18 @@ export default function CDMPage({ onPatientClick }) {
             }]
           }} />
         </Panel>
-        <Panel title="Meal vs Exercise Logging" dotColor={COLORS.purple} tag="Doughnut">
-          <ChartWrapper type="doughnut" height={220} data={{
-            labels: ['Meal Logs', 'Exercise Logs'],
+        <Panel title="Avg Adherence: Diet vs Exercise" dotColor={COLORS.purple} tag="Bar">
+          <ChartWrapper type="bar" height={220} data={{
+            labels: ['Diet Adherence', 'Exercise Adherence', 'Meal Logging', 'Exercise Logging'],
             datasets: [{
-              data: [m.totalMealLogs, m.totalExerciseLogs],
-              backgroundColor: [COLORS.accent, COLORS.blue]
+              label: 'Avg %',
+              data: [m.avgDietAdherence, m.avgExerciseAdherence, m.avgMealLoggingRate, m.avgExerciseLoggingRate],
+              backgroundColor: [COLORS.green, COLORS.accent, COLORS.blue, COLORS.purple],
+              borderRadius: 3,
             }]
+          }} options={{
+            plugins: { legend: { display: false } },
+            scales: { y: { max: 100, ticks: { callback: v => v + '%' } } }
           }} />
         </Panel>
       </div>

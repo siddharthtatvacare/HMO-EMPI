@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Panel from '../components/Panel';
 import DataTable from '../components/DataTable';
+import RiskBadge from '../components/RiskBadge';
 import PatientDetail from './PatientDetail';
 import { patients, consultations, pharmacyOrders, diagnosticOrders, cdmRecords } from '../data/store';
 
@@ -24,7 +25,9 @@ export default function PatientRegistry() {
       pharmaCount: numPharma,
       diagCount: numDiag,
       cdmEnrolled: cdm ? 'Yes' : 'No',
-      metabolicScore: cdm?.metabolicScore ?? '—',
+      metScoreValue: cdm?.metabolicScore?.current ?? null,
+      metScoreLabel: cdm?.metabolicScore?.label ?? '—',
+      profilesOffQ2: p.profilesOff?.q2 ?? '—',
     };
   }), []);
 
@@ -33,19 +36,23 @@ export default function PatientRegistry() {
   }
 
   const columns = [
-    { key: 'id', label: 'ID' },
     { key: 'name', label: 'Patient Name' },
-    { key: 'gender', label: 'Gender' },
     { key: 'age', label: 'Age' },
-    { key: 'specialisation', label: 'Spec.' },
-    { key: 'center', label: 'Center', render: v => v?.replace('Aventus - ', '') },
-    { key: 'doctor', label: 'Doctor' },
-    { key: 'enrollDate', label: 'Enrolled' },
+    { key: 'gender', label: 'Gender' },
+    { key: 'employer', label: 'Employer' },
+    { key: 'riskCohort', label: 'Risk Cohort', render: (val) => <RiskBadge cohort={val} /> },
+    { key: 'profilesOffQ2', label: 'Prof. Off' },
+    { key: 'center', label: 'Center', render: (val) => val?.replace('Aventus - ', '') },
+    { key: 'cdmEnrolled', label: 'CDM', render: (val) => (
+      <span style={{ color: val === 'Yes' ? 'var(--green)' : 'var(--text-muted)', fontWeight: val === 'Yes' ? 600 : 400 }}>
+        {val}
+      </span>
+    )},
+    { key: 'metScoreLabel', label: 'Met Score' },
     { key: 'consultCount', label: 'Consults' },
-    { key: 'pharmaCount', label: 'Rx Orders' },
+    { key: 'pharmaCount', label: 'Rx' },
     { key: 'diagCount', label: 'Diag.' },
-    { key: 'cdmEnrolled', label: 'CDM' },
-    { key: 'metabolicScore', label: 'Score' },
+    { key: 'enrollDate', label: 'Enrolled' },
   ];
 
   return (
@@ -55,7 +62,7 @@ export default function PatientRegistry() {
         <DataTable
           columns={columns}
           data={enriched}
-          searchKeys={['name', 'id', 'doctor', 'center', 'specialisation']}
+          searchKeys={['name', 'employer', 'doctor', 'center', 'riskCohort']}
           onRowClick={row => setSelectedPatient(row.id)}
           pageSize={20}
         />
