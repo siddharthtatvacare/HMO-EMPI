@@ -1,0 +1,27 @@
+[    1103ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5175/favicon.ico:0
+[  135695ms] [ERROR] Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:5175/node_modules/.vite/deps/chunk-FCVBRA66.js?v=5edbc429:391
+[  135698ms] [ERROR] Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:5175/node_modules/.vite/deps/chunk-FCVBRA66.js?v=5edbc429:391
+[  135701ms] TypeError: Cannot read properties of null (reading 'useRef')
+    at exports.useRef (http://localhost:5175/node_modules/.vite/deps/chunk-FCVBRA66.js?v=5edbc429:956:35)
+    at ChartComponent (http://localhost:5175/node_modules/.vite/deps/react-chartjs-2.js?v=79de86d7:82:45)
+    at Object.react_stack_bottom_frame (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:18509:20)
+    at renderWithHooks (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:5654:24)
+    at updateForwardRef (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:7198:21)
+    at beginWork (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:8735:20)
+    at runWithFiberInDEV (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:997:72)
+    at performUnitOfWork (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:12561:98)
+    at workLoopSync (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:12424:43)
+    at renderRootSync (http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:12408:13)
+[  135701ms] [WARNING] %s
+
+%s
+ An error occurred in the <ForwardRef(ChartComponent)> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5175/node_modules/.vite/deps/react-dom_client.js?v=cd520782:6965
