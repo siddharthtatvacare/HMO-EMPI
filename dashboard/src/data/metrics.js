@@ -478,7 +478,9 @@ export function computeFinancialMetrics(patients, cdmRecords) {
   const avgNonCdmCost = nonCdmPatients.length > 0
     ? Math.round(nonCdmPatients.reduce((s, p) => s + p.totalClaims, 0) / nonCdmPatients.length)
     : 0;
-  const cdmSavingsPerMember = avgNonCdmCost - avgCdmCost;
+  // CDM savings: weighted avg of per-cohort (nonCdm - cdm) differences,
+  // weighted by CDM patient count in each cohort to control for risk mix
+  let cdmSavingsPerMember = 0;
 
   // Claims by category
   const claimsByCategory = {
@@ -536,6 +538,18 @@ export function computeFinancialMetrics(patients, cdmRecords) {
       },
     };
   });
+
+  // Compute CDM savings from per-cohort differences (same data the chart uses)
+  let totalCdmWeighted = 0;
+  let totalCdmCount = 0;
+  cohortOrder.forEach(cohort => {
+    const roi = cdmROIByCohort[cohort];
+    if (roi.cdm.count > 0 && roi.nonCdm.count > 0) {
+      totalCdmWeighted += (roi.nonCdm.avgClaims - roi.cdm.avgClaims) * roi.cdm.count;
+      totalCdmCount += roi.cdm.count;
+    }
+  });
+  cdmSavingsPerMember = totalCdmCount > 0 ? Math.round(totalCdmWeighted / totalCdmCount) : 0;
 
   return {
     totalPremium, totalClaims, mlr, avgCostPerMember,
